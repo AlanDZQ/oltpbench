@@ -17,9 +17,6 @@
 
 package com.oltpbenchmark.util;
 
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -414,73 +411,4 @@ public abstract class StringUtil {
         return sb.toString();
     }
 
-    /**
-     * Convert a byte array into a valid mysql string literal, assuming that
-     * it will be inserted into a column with latin-1 encoding.
-     * Based on information at
-     * http://dev.mysql.com/doc/refman/5.1/en/string-literals.html
-     *
-     * @param arr
-     * @return
-     */
-    public static String stringLiteral(byte[] arr) {
-        CharBuffer cb = Charset.forName("ISO-8859-1").decode(ByteBuffer.wrap(arr));
-        StringBuilder sb = new StringBuilder();
-        sb.append('\'');
-        for (int i = 0; i < cb.length(); i++) {
-            char c = cb.get(i);
-            switch (c) {
-                case '\'':
-                    sb.append("\\'");
-                    break;
-                case '\\':
-                    sb.append("\\\\");
-                    break;
-                case '\0':
-                    sb.append("\\0");
-                    break;
-                case '\b':
-                    sb.append("\\b");
-                    break;
-                case '\n':
-                    sb.append("\\n");
-                    break;
-                case '\r':
-                    sb.append("\\r");
-                    break;
-                case '\t':
-                    sb.append("\\t");
-                    break;
-                default:
-                    if (Character.getNumericValue(c) < 0) {
-                        // Fall back on hex string for values not defined in latin-1
-                        return hexStringLiteral(arr);
-                    } else {
-                        sb.append(c);
-                    }
-            }
-        }
-        sb.append('\'');
-        return sb.toString();
-    }
-
-    /**
-     * Create a mysql hex string literal from array:
-     * E.g. [0xf, bc, 4c, 4] converts to x'0fbc4c03'
-     *
-     * @param arr
-     * @return the mysql hex literal including quotes
-     */
-    private static String hexStringLiteral(byte[] arr) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("x'");
-        for (byte b : arr) {
-            int lo = b & 0xf;
-            int hi = (b >> 4) & 0xf;
-            sb.append(Character.forDigit(hi, 16));
-            sb.append(Character.forDigit(lo, 16));
-        }
-        sb.append("'");
-        return sb.toString();
-    }
 }

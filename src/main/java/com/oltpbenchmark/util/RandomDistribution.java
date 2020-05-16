@@ -1,80 +1,19 @@
-/**
- * Copyright 2015 by OLTPBenchmark Project                                   *
- * *
- * Licensed under the Apache License, Version 2.0 (the "License");           *
- * you may not use this file except in compliance with the License.          *
- * You may obtain a copy of the License at                                   *
- * *
- * http://www.apache.org/licenses/LICENSE-2.0                              *
- * *
- * Unless required by applicable law or agreed to in writing, software       *
- * distributed under the License is distributed on an "AS IS" BASIS,         *
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  *
- * See the License for the specific language governing permissions and       *
- * limitations under the License.                                            *
- * <p>
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with this
- * work for additional information regarding copyright ownership. The ASF
- * licenses this file to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- * <p>
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with this
- * work for additional information regarding copyright ownership. The ASF
- * licenses this file to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- * <p>
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with this
- * work for additional information regarding copyright ownership. The ASF
- * licenses this file to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- */
+/******************************************************************************
+ *  Copyright 2015 by OLTPBenchmark Project                                   *
+ *                                                                            *
+ *  Licensed under the Apache License, Version 2.0 (the "License");           *
+ *  you may not use this file except in compliance with the License.          *
+ *  You may obtain a copy of the License at                                   *
+ *                                                                            *
+ *    http://www.apache.org/licenses/LICENSE-2.0                              *
+ *                                                                            *
+ *  Unless required by applicable law or agreed to in writing, software       *
+ *  distributed under the License is distributed on an "AS IS" BASIS,         *
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  *
+ *  See the License for the specific language governing permissions and       *
+ *  limitations under the License.                                            *
+ ******************************************************************************/
 
-/**
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with this
- * work for additional information regarding copyright ownership. The ASF
- * licenses this file to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- */
 package com.oltpbenchmark.util;
 
 import java.util.*;
@@ -98,7 +37,6 @@ public class RandomDistribution {
         protected final Random random;
         protected final double mean;
         protected final long range_size;
-        private Histogram<Long> history;
 
         public DiscreteRNG(Random random, long min, long max) {
             if (min >= max) {
@@ -120,9 +58,6 @@ public class RandomDistribution {
         @Override
         public final int nextInt() {
             long val = (int) this.nextLongImpl();
-            if (this.history != null) {
-                this.history.put(val);
-            }
             return ((int) val);
         }
 
@@ -132,11 +67,7 @@ public class RandomDistribution {
          */
         @Override
         public final long nextLong() {
-            long val = this.nextLongImpl();
-            if (this.history != null) {
-                this.history.put(val);
-            }
-            return (val);
+            return (this.nextLongImpl());
         }
 
         @Override
@@ -202,7 +133,6 @@ public class RandomDistribution {
     public static class FlatHistogram<T> extends DiscreteRNG {
         private static final long serialVersionUID = 1L;
         private final Flat inner;
-        private final Histogram<T> histogram;
         private final SortedMap<Long, T> value_rle = new TreeMap<>();
         private Histogram<T> history;
 
@@ -212,12 +142,11 @@ public class RandomDistribution {
          */
         public FlatHistogram(Random random, Histogram<T> histogram) {
             super(random, 0, histogram.getSampleCount());
-            this.histogram = histogram;
             this.inner = new Flat(random, 0, histogram.getSampleCount());
 
             long total = 0;
-            for (T k : this.histogram.values()) {
-                long v = this.histogram.get(k);
+            for (T k : histogram.values()) {
+                long v = histogram.get(k);
                 total += v;
                 this.value_rle.put(total, k);
             } // FOR

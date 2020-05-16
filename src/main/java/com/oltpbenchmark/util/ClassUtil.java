@@ -34,8 +34,6 @@ import java.util.*;
 public abstract class ClassUtil {
     private static final Logger LOG = LoggerFactory.getLogger(ClassUtil.class);
 
-    private static final Class<?>[] EMPTY_ARRAY = new Class[]{};
-
     private static final Map<Class<?>, List<Class<?>>> CACHE_getSuperClasses = new HashMap<>();
     private static final Map<Class<?>, Set<Class<?>>> CACHE_getInterfaceClasses = new HashMap<>();
 
@@ -197,35 +195,6 @@ public abstract class ClassUtil {
             } // FOR (param)
         } // FOR (constructors)
         throw new RuntimeException("Failed to retrieve constructor for " + target_class.getSimpleName(), error);
-    }
-
-    /**
-     * Create an object for the given class and initialize it from conf
-     *
-     * @param theClass class of which an object is created
-     * @param expected the expected parent class or interface
-     * @return a new object
-     */
-    public static <T> T newInstance(Class<?> theClass, Class<T> expected) {
-        T result;
-        try {
-            if (!expected.isAssignableFrom(theClass)) {
-                throw new Exception("Specified class " + theClass.getName() + "" +
-                        "does not extend/implement " + expected.getName());
-            }
-            Class<? extends T> clazz = (Class<? extends T>) theClass;
-            Constructor<? extends T> meth = clazz.getDeclaredConstructor(EMPTY_ARRAY);
-            meth.setAccessible(true);
-            result = meth.newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return result;
-    }
-
-    public static <T> T newInstance(String className, Class<T> expected)
-            throws ClassNotFoundException {
-        return newInstance(getClass(className), expected);
     }
 
     /**

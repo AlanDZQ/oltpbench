@@ -30,8 +30,6 @@ import com.oltpbenchmark.util.SQLUtil;
 import com.oltpbenchmark.util.StringUtil;
 import com.oltpbenchmark.util.TextGenerator;
 import com.oltpbenchmark.util.TimeUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

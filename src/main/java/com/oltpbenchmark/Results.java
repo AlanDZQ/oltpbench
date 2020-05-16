@@ -29,7 +29,6 @@ import java.util.*;
 public final class Results {
     public final long nanoSeconds;
     public final int measuredRequests;
-    public final DistributionStatistics latencyDistribution;
     final Histogram<TransactionType> txnSuccess = new Histogram<>(true);
     final Histogram<TransactionType> txnAbort = new Histogram<>(true);
     final Histogram<TransactionType> txnRetry = new Histogram<>(true);
@@ -41,7 +40,6 @@ public final class Results {
     public Results(long nanoSeconds, int measuredRequests, DistributionStatistics latencyDistribution, final List<LatencyRecord.Sample> latencySamples) {
         this.nanoSeconds = nanoSeconds;
         this.measuredRequests = measuredRequests;
-        this.latencyDistribution = latencyDistribution;
 
         if (latencyDistribution == null) {
 
@@ -138,15 +136,6 @@ public final class Results {
                     (int) s.get99thPercentile(),
                     (int) s.getMaximum());
             i += 1;
-        }
-    }
-
-    public void writeAllCSV(PrintStream out) {
-        long startNs = latencySamples.get(0).startNs;
-        out.println("transaction type (index in config file), start time (microseconds),latency (microseconds)");
-        for (Sample s : latencySamples) {
-            long startUs = (s.startNs - startNs + 500) / 1000;
-            out.println(s.tranType + "," + startUs + "," + s.latencyUs);
         }
     }
 

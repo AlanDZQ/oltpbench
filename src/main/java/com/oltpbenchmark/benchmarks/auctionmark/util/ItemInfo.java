@@ -23,7 +23,6 @@ import com.oltpbenchmark.util.json.JSONException;
 import com.oltpbenchmark.util.json.JSONObject;
 import com.oltpbenchmark.util.json.JSONStringer;
 
-import java.io.IOException;
 import java.sql.Timestamp;
 
 public class ItemInfo implements JSONSerializable, Comparable<ItemInfo> {
@@ -99,16 +98,6 @@ public class ItemInfo implements JSONSerializable, Comparable<ItemInfo> {
     // -----------------------------------------------------------------
     // SERIALIZATION
     // -----------------------------------------------------------------
-
-    @Override
-    public void load(String input_path) throws IOException {
-
-    }
-
-    @Override
-    public void save(String output_path) throws IOException {
-
-    }
 
     @Override
     public String toJSONString() {

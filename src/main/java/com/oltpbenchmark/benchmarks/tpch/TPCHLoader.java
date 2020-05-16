@@ -28,8 +28,6 @@ package com.oltpbenchmark.benchmarks.tpch;
 import com.oltpbenchmark.api.Loader;
 import com.oltpbenchmark.api.LoaderThread;
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -144,7 +142,7 @@ public class TPCHLoader extends Loader<TPCHBenchmark> {
             public void load(Connection conn) throws SQLException {
                 try (PreparedStatement statement = conn.prepareStatement("INSERT INTO customer " + "(c_custkey, c_name, c_address, c_nationkey," + " c_phone, c_acctbal, c_mktsegment, c_comment ) " + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)")) {
 
-                    loadTable(conn, statement, "Customer", customerTypes);
+                    loadTable(statement, "Customer", customerTypes);
                 }
             }
         });
@@ -155,7 +153,7 @@ public class TPCHLoader extends Loader<TPCHBenchmark> {
             public void load(Connection conn) throws SQLException {
                 try (PreparedStatement statement = conn.prepareStatement("INSERT INTO lineitem " + "(l_orderkey, l_partkey, l_suppkey, l_linenumber," + " l_quantity, l_extendedprice, l_discount, l_tax," + " l_returnflag, l_linestatus, l_shipdate, l_commitdate," + " l_receiptdate, l_shipinstruct, l_shipmode, l_comment) " + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
 
-                    loadTable(conn, statement, "LineItem", lineitemTypes);
+                    loadTable(statement, "LineItem", lineitemTypes);
                 }
             }
         });
@@ -166,7 +164,7 @@ public class TPCHLoader extends Loader<TPCHBenchmark> {
             public void load(Connection conn) throws SQLException {
                 try (PreparedStatement statement = conn.prepareStatement("INSERT INTO nation " + "(n_nationkey, n_name, n_regionkey, n_comment) " + "VALUES (?, ?, ?, ?)")) {
 
-                    loadTable(conn, statement, "Nation", nationTypes);
+                    loadTable(statement, "Nation", nationTypes);
                 }
             }
         });
@@ -177,7 +175,7 @@ public class TPCHLoader extends Loader<TPCHBenchmark> {
             public void load(Connection conn) throws SQLException {
                 try (PreparedStatement statement = conn.prepareStatement("INSERT INTO orders " + "(o_orderkey, o_custkey, o_orderstatus, o_totalprice," + " o_orderdate, o_orderpriority, o_clerk, o_shippriority," + " o_comment) " + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
 
-                    loadTable(conn, statement, "orders", ordersTypes);
+                    loadTable(statement, "orders", ordersTypes);
                 }
             }
         });
@@ -188,7 +186,7 @@ public class TPCHLoader extends Loader<TPCHBenchmark> {
             public void load(Connection conn) throws SQLException {
                 try (PreparedStatement statement = conn.prepareStatement("INSERT INTO part " + "(p_partkey, p_name, p_mfgr, p_brand, p_type," + " p_size, p_container, p_retailprice, p_comment) " + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
 
-                    loadTable(conn, statement, "part", partTypes);
+                    loadTable(statement, "part", partTypes);
                 }
 
             }
@@ -201,7 +199,7 @@ public class TPCHLoader extends Loader<TPCHBenchmark> {
 
                 try (PreparedStatement statement = conn.prepareStatement("INSERT INTO partsupp " + "(ps_partkey, ps_suppkey, ps_availqty, ps_supplycost," + " ps_comment) " + "VALUES (?, ?, ?, ?, ?)")) {
 
-                    loadTable(conn, statement, "partsupp", partsuppTypes);
+                    loadTable(statement, "partsupp", partsuppTypes);
                 }
             }
         });
@@ -212,7 +210,7 @@ public class TPCHLoader extends Loader<TPCHBenchmark> {
             public void load(Connection conn) throws SQLException {
                 try (PreparedStatement statement = conn.prepareStatement("INSERT INTO region " + " (r_regionkey, r_name, r_comment) " + "VALUES (?, ?, ?)")) {
 
-                    loadTable(conn, statement, "Region", regionTypes);
+                    loadTable(statement, "Region", regionTypes);
                 }
             }
         });
@@ -223,7 +221,7 @@ public class TPCHLoader extends Loader<TPCHBenchmark> {
             public void load(Connection conn) throws SQLException {
                 try (PreparedStatement statement = conn.prepareStatement("INSERT INTO supplier " + "(s_suppkey, s_name, s_address, s_nationkey, s_phone," + " s_acctbal, s_comment) " + "VALUES (?, ?, ?, ?, ?, ?, ?)")) {
 
-                    loadTable(conn, statement, "Supplier", supplierTypes);
+                    loadTable(statement, "Supplier", supplierTypes);
                 }
             }
         });
@@ -271,7 +269,7 @@ public class TPCHLoader extends Loader<TPCHBenchmark> {
     }
 
 
-    private void loadTable(Connection conn, PreparedStatement prepStmt, String tableName, CastTypes[] types) {
+    private void loadTable(PreparedStatement prepStmt, String tableName, CastTypes[] types) {
         int recordsRead = 0;
 
         String format = getFileFormat();

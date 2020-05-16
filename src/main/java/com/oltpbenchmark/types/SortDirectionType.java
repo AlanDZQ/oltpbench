@@ -41,15 +41,11 @@ import java.util.Map;
  *
  */
 public enum SortDirectionType {
-    INVALID(0),
-    ASC(1),
-    DESC(2);
+    INVALID(),
+    ASC(),
+    DESC();
 
-    SortDirectionType(int val) {
-    }
-
-    public int getValue() {
-        return this.ordinal();
+    SortDirectionType() {
     }
 
     protected static final Map<Integer, SortDirectionType> idx_lookup = new HashMap<>();
@@ -62,22 +58,4 @@ public enum SortDirectionType {
         }
     }
 
-    public static Map<Integer, SortDirectionType> getIndexMap() {
-        return idx_lookup;
-    }
-
-    public static Map<String, SortDirectionType> getNameMap() {
-        return name_lookup;
-    }
-
-    public static SortDirectionType get(Integer idx) {
-
-        SortDirectionType ret = SortDirectionType.idx_lookup.get(idx);
-        return (ret == null ? SortDirectionType.INVALID : ret);
-    }
-
-    public static SortDirectionType get(String name) {
-        SortDirectionType ret = SortDirectionType.name_lookup.get(name.toLowerCase().intern());
-        return (ret == null ? SortDirectionType.INVALID : ret);
-    }
 }

@@ -21,8 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class DistributionStatistics {
     private static final Logger LOG = LoggerFactory.getLogger(DistributionStatistics.class);
@@ -42,17 +40,15 @@ public class DistributionStatistics {
     private final int count;
     private final long[] percentiles;
     private final double average;
-    private final double standardDeviation;
 
     public DistributionStatistics(int count, long[] percentiles,
-                                  double average, double standardDeviation) {
+                                  double average) {
 
 
         this.count = count;
         this.percentiles = Arrays.copyOfRange(percentiles, 0,
                 PERCENTILES.length);
         this.average = average;
-        this.standardDeviation = standardDeviation;
     }
 
     /**
@@ -64,7 +60,7 @@ public class DistributionStatistics {
             LOG.warn("cannot compute statistics for an empty list");
             long[] percentiles = new long[PERCENTILES.length];
             Arrays.fill(percentiles, -1);
-            return new DistributionStatistics(0, percentiles, -1, -1);
+            return new DistributionStatistics(0, percentiles, -1);
 
 //			long[] percentiles = new long[PERCENTILES.length];
 //			for (int i = 0; i < percentiles.length; ++i) {
@@ -86,11 +82,6 @@ public class DistributionStatistics {
             double v = value - average;
             sumDiffsSquared += v * v;
         }
-        double standardDeviation = 0;
-        if (values.length > 1) {
-            standardDeviation = Math
-                    .sqrt(sumDiffsSquared / (values.length - 1));
-        }
 
         // NOTE: NIST recommends interpolating. This just selects the closest
         // value, which is described as another common technique.
@@ -104,8 +95,8 @@ public class DistributionStatistics {
             percentiles[i] = values[index];
         }
 
-        return new DistributionStatistics(values.length, percentiles, average,
-                standardDeviation);
+        return new DistributionStatistics(values.length, percentiles, average
+        );
     }
 
     public int getCount() {
@@ -114,10 +105,6 @@ public class DistributionStatistics {
 
     public double getAverage() {
         return average;
-    }
-
-    public double getStandardDeviation() {
-        return standardDeviation;
     }
 
     public double getMinimum() {
@@ -165,17 +152,4 @@ public class DistributionStatistics {
                 / 1e6 + "]";
     }
 
-    public Map<String, Integer> toMap() {
-        Map<String, Integer> distMap = new LinkedHashMap<>();
-        distMap.put("Minimum Latency (microseconds)", (int) getMinimum());
-        distMap.put("25th Percentile Latency (microseconds)", (int) get25thPercentile());
-        distMap.put("Median Latency (microseconds)", (int) getMedian());
-        distMap.put("Average Latency (microseconds)", (int) getAverage());
-        distMap.put("75th Percentile Latency (microseconds)", (int) get75thPercentile());
-        distMap.put("90th Percentile Latency (microseconds)", (int) get90thPercentile());
-        distMap.put("95th Percentile Latency (microseconds)", (int) get95thPercentile());
-        distMap.put("99th Percentile Latency (microseconds)", (int) get99thPercentile());
-        distMap.put("Maximum Latency (microseconds)", (int) getMaximum());
-        return distMap;
-    }
 }

@@ -46,7 +46,7 @@ public class CounterGenerator extends IntegerGenerator {
      */
     public CounterGenerator(int countstart) {
         counter = new AtomicInteger(countstart);
-        setLastInt(counter.get() - 1);
+        setLastInt();
     }
 
     /**
@@ -55,18 +55,8 @@ public class CounterGenerator extends IntegerGenerator {
      */
     public int nextInt() {
         int ret = counter.getAndIncrement();
-        setLastInt(ret);
+        setLastInt();
         return ret;
-    }
-
-    @Override
-    public int lastInt() {
-        return counter.get() - 1;
-    }
-
-    @Override
-    public double mean() {
-        throw new UnsupportedOperationException("Can't compute mean of non-stationary distribution!");
     }
 
     public void reset() {

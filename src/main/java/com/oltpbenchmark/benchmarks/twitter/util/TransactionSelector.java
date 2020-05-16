@@ -17,8 +17,6 @@
 
 package com.oltpbenchmark.benchmarks.twitter.util;
 
-import com.oltpbenchmark.api.TransactionTypes;
-
 import java.io.*;
 import java.util.ArrayList;
 
@@ -27,10 +25,8 @@ public class TransactionSelector {
 
     DataInputStream dis = null;
     DataInputStream dis2 = null;
-    static final double READ_WRITE_RATIO = 11.8; // from
-    // http://www.globule.org/publi/WWADH_comnet2009.html
 
-    public TransactionSelector(String filename, String filename2, TransactionTypes transTypes) throws FileNotFoundException {
+    public TransactionSelector(String filename, String filename2) throws FileNotFoundException {
 
         if (filename == null || filename.isEmpty()) {
             throw new FileNotFoundException("You must specify a filename to instantiate the TransactionSelector... (probably missing in your workload configuration?)");
@@ -53,17 +49,6 @@ public class TransactionSelector {
         dis2 = new DataInputStream(bis2);
         dis2.mark(1024 * 1024 * 1024);
 
-    }
-
-    public synchronized TwitterOperation nextTransaction() throws IOException {
-        if (dis.available() == 0) {
-            dis.reset();
-        }
-        if (dis2.available() == 0) {
-            dis2.reset();
-        }
-
-        return readNextTransaction();
     }
 
     private TwitterOperation readNextTransaction() throws IOException {

@@ -21,7 +21,6 @@ import com.oltpbenchmark.util.QueueLimitException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,15 +43,12 @@ public class WorkloadState {
     private int num_terminals;
     private int workerNeedSleep;
 
-    private List<Phase> works = new ArrayList<>();
     private Iterator<Phase> phaseIterator;
     private Phase currentPhase = null;
-    private long phaseStartNs = 0;
     private TraceReader traceReader = null;
 
     public WorkloadState(BenchmarkState benchmarkState, List<Phase> works, int num_terminals, TraceReader traceReader) {
         this.benchmarkState = benchmarkState;
-        this.works = works;
         this.num_terminals = num_terminals;
         this.workerNeedSleep = num_terminals;
         this.traceReader = traceReader;

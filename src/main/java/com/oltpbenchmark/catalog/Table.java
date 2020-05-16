@@ -81,10 +81,6 @@ public class Table extends AbstractCatalogObject {
         return this.columns.get(index);
     }
 
-    public String getColumnName(int index) {
-        return this.columns.get(index).getName();
-    }
-
     public int getColumnIndex(Column catalog_col) {
         return (this.getColumnIndex(catalog_col.getName()));
     }
@@ -125,19 +121,6 @@ public class Table extends AbstractCatalogObject {
         this.indexes.add(index);
     }
 
-    public Collection<Index> getIndexes() {
-        return (this.indexes);
-    }
-
-    /**
-     * Return the number of indexes for this table
-     *
-     * @return
-     */
-    public int getIndexCount() {
-        return this.indexes.size();
-    }
-
     /**
      * Return a particular index based on its name
      *
@@ -161,30 +144,6 @@ public class Table extends AbstractCatalogObject {
     public void setPrimaryKeyColumns(Collection<String> colNames) {
         this.primaryKeys.clear();
         this.primaryKeys.addAll(colNames);
-    }
-
-    /**
-     * Get the list of column names that are the primary keys for this table
-     *
-     * @return
-     */
-    public List<String> getPrimaryKeyColumns() {
-        return Collections.unmodifiableList(this.primaryKeys);
-    }
-
-    public void addConstraint(List<IntegrityConstraint> iclist) throws IntegrityConstraintsExistsException {
-        for (IntegrityConstraint ic : iclist) {
-            addConstraint(ic);
-        }
-    }
-
-    public void addConstraint(IntegrityConstraint ic) throws IntegrityConstraintsExistsException {
-        for (IntegrityConstraint c : constraints) {
-            if (c != null && c.getId().equals(ic.getId())) {
-                throw new IntegrityConstraintsExistsException("A constraint " + ic.getId() + " already exists in this table");
-            }
-        }
-        constraints.add(ic);
     }
 
     @Override

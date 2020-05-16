@@ -62,13 +62,6 @@ public abstract class TextGenerator {
         return randomFastChars(rng, chars);
     }
 
-    public static char[] randomChars(Random rng, char[] chars) {
-        for (int i = 0; i < chars.length; i++) {
-            chars[i] = CHAR_SYMBOLS[rng.nextInt(CHAR_SYMBOLS.length)];
-        } // FOR
-        return (chars);
-    }
-
     /**
      * Faster (pseudo) random number generator
      *
@@ -106,22 +99,6 @@ public abstract class TextGenerator {
      */
     public static String randomStr(Random rng, int strLen) {
         return new String(randomChars(rng, strLen));
-    }
-
-    /**
-     * Returns a new string filled with random text. The first characters
-     * of the string will be filled with the prefix
-     *
-     * @param rng
-     * @param strLen
-     * @param prefix
-     * @return
-     */
-    public static String randomStr(Random rng, int strLen, String prefix) {
-        // Generate the random chars and then add in our prefix
-        char[] chars = randomChars(rng, strLen);
-        prefix.getChars(0, Math.min(prefix.length(), strLen), chars, 0);
-        return new String(chars);
     }
 
     /**

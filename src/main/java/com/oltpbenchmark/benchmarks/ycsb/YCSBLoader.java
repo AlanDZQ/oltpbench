@@ -21,8 +21,6 @@ import com.oltpbenchmark.api.LoaderThread;
 import com.oltpbenchmark.catalog.Table;
 import com.oltpbenchmark.util.SQLUtil;
 import com.oltpbenchmark.util.TextGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -78,7 +76,7 @@ class YCSBLoader extends Loader<YCSBBenchmark> {
                 stmt.addBatch();
                 total++;
                 if (++batch >= workConf.getDBBatchSize()) {
-                    int[] result = stmt.executeBatch();
+                    stmt.executeBatch();
 
                     batch = 0;
                     if (LOG.isDebugEnabled()) {

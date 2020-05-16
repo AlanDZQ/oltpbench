@@ -27,31 +27,12 @@ public abstract class IntegrityConstraint implements Serializable {
     private static final long serialVersionUID = 1L;
 
 
-    private String id;
-
-    public IntegrityConstraint() {
-        // ????
-    }
-
     @Override
     public IntegrityConstraint clone() {
 
         throw new NotImplementedException("The clone method should be implemented in the subtypes!");
 
     }
-
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public abstract boolean equals(IntegrityConstraint ic);
 
 
 }

@@ -108,7 +108,6 @@ public class ScrambledZipfianGenerator extends IntegerGenerator {
     /**
      * Return the next int in the sequence.
      */
-    @Override
     public int nextInt() {
         return (int) nextLong();
     }
@@ -119,15 +118,8 @@ public class ScrambledZipfianGenerator extends IntegerGenerator {
     public long nextLong() {
         long ret = gen.nextLong();
         ret = _min + Utils.FNVhash64(ret) % _itemcount;
-        setLastInt((int) ret);
+        setLastInt();
         return ret;
     }
 
-    /**
-     * since the values are scrambled (hopefully uniformly), the mean is simply the middle of the range.
-     */
-    @Override
-    public double mean() {
-        return ((double) (_min + _max)) / 2.0;
-    }
 }

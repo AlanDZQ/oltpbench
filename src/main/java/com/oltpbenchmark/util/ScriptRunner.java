@@ -53,11 +53,6 @@ public class ScriptRunner {
         this.stopOnError = stopOnError;
     }
 
-    public void setDelimiter(String delimiter, boolean fullLineDelimiter) {
-        this.delimiter = delimiter;
-        this.fullLineDelimiter = fullLineDelimiter;
-    }
-
 
     public void runScript(String path) throws IOException, SQLException {
 

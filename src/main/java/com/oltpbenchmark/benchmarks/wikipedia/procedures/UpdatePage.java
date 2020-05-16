@@ -21,8 +21,6 @@ import com.oltpbenchmark.api.Procedure;
 import com.oltpbenchmark.api.SQLStmt;
 import com.oltpbenchmark.benchmarks.wikipedia.WikipediaConstants;
 import com.oltpbenchmark.util.TimeUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -32,7 +30,6 @@ import java.util.ArrayList;
 
 //import ch.ethz.ssh2.log.Logger;
 public class UpdatePage extends Procedure {
-    private static final Logger LOG = LoggerFactory.getLogger(UpdatePage.class);
     // -----------------------------------------------------------------
     // STATEMENTS
     // -----------------------------------------------------------------
@@ -65,7 +62,7 @@ public class UpdatePage extends Procedure {
             ps.setInt(param++, pageId);
             ps.setString(param++, pageText);
             ps.setString(param++, "utf-8");  //This is an error
-            execute(conn, ps);
+            execute(ps);
 
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 rs.next();
@@ -88,7 +85,7 @@ public class UpdatePage extends Procedure {
             ps.setInt(param++, 0);            // rev_deleted //this is an error
             ps.setInt(param++, pageText.length()); // rev_len
             ps.setLong(param++, revisionId);   // rev_parent_id // this is an error
-            execute(conn, ps);
+            execute(ps);
 
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 rs.next();
@@ -106,7 +103,7 @@ public class UpdatePage extends Procedure {
             ps.setString(param++, timestamp);
             ps.setInt(param++, pageText.length());
             ps.setInt(param++, pageId);
-            execute(conn, ps);
+            execute(ps);
         }
 
         try (PreparedStatement ps = this.getPreparedStatement(conn, insertRecentChanges)) {
@@ -129,7 +126,7 @@ public class UpdatePage extends Procedure {
             ps.setString(param++, userIp);        // rc_ip
             ps.setInt(param++, pageText.length());// rc_old_len
             ps.setInt(param++, pageText.length());// rc_new_len
-            execute(conn, ps);
+            execute(ps);
         }
 
         // REMOVED
@@ -167,7 +164,7 @@ public class UpdatePage extends Procedure {
                     ps.setInt(param, otherUserId);
                     ps.addBatch();
                 } // FOR
-                executeBatch(conn, ps);
+                executeBatch(ps);
             }
 
 
@@ -201,30 +198,30 @@ public class UpdatePage extends Procedure {
             ps.setString(param++, userText);
             ps.setInt(param++, pageId);
             ps.setString(param++, String.format("%d\n%d\n%d", nextRevId, revisionId, 1));
-            execute(conn, ps);
+            execute(ps);
         }
 
         try (PreparedStatement ps = this.getPreparedStatement(conn, updateUserEdit)) {
             int param = 1;
             ps.setInt(param++, userId);
-            execute(conn, ps);
+            execute(ps);
         }
 
         try (PreparedStatement ps = this.getPreparedStatement(conn, updateUserTouched)) {
             int param = 1;
             ps.setString(param++, timestamp);
             ps.setInt(param++, userId);
-            execute(conn, ps);
+            execute(ps);
         }
     }
 
-    public void execute(Connection conn, PreparedStatement p) throws SQLException {
+    public void execute(PreparedStatement p) throws SQLException {
 
         p.execute();
 
     }
 
-    public void executeBatch(Connection conn, PreparedStatement p) throws SQLException {
+    public void executeBatch(PreparedStatement p) throws SQLException {
 
         p.executeBatch();
 

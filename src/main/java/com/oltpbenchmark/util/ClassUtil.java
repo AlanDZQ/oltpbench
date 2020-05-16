@@ -40,43 +40,6 @@ public abstract class ClassUtil {
     private static final Map<Class<?>, Set<Class<?>>> CACHE_getInterfaceClasses = new HashMap<>();
 
     /**
-     * Check if the given object is an array (primitve or native).
-     * http://www.java2s.com/Code/Java/Reflection/Checkifthegivenobjectisanarrayprimitveornative.htm
-     *
-     * @param obj Object to test.
-     * @return True of the object is an array.
-     */
-    public static boolean isArray(final Object obj) {
-        return (obj != null ? obj.getClass().isArray() : false);
-    }
-
-    public static boolean[] isArray(final Object[] objs) {
-        boolean[] is_array = new boolean[objs.length];
-        for (int i = 0; i < objs.length; i++) {
-            is_array[i] = ClassUtil.isArray(objs[i]);
-        } // FOR
-        return (is_array);
-    }
-
-    /**
-     * Convert a Enum array to a Field array
-     * This assumes that the name of each Enum element corresponds to a data member in the clas
-     *
-     * @param <E>
-     * @param clazz
-     * @param members
-     * @return
-     * @throws NoSuchFieldException
-     */
-    public static <E extends Enum<?>> Field[] getFieldsFromMembersEnum(Class<?> clazz, E[] members) throws NoSuchFieldException {
-        Field[] fields = new Field[members.length];
-        for (int i = 0; i < members.length; i++) {
-            fields[i] = clazz.getDeclaredField(members[i].name().toLowerCase());
-        } // FOR
-        return (fields);
-    }
-
-    /**
      * Get the generic types for the given field
      *
      * @param field
@@ -281,17 +244,4 @@ public abstract class ClassUtil {
 
     }
 
-    /**
-     * Returns true if asserts are enabled. This assumes that
-     * we're always using the default system ClassLoader
-     */
-    public static boolean isAssertsEnabled() {
-        boolean ret = false;
-        try {
-
-        } catch (AssertionError ex) {
-            ret = true;
-        }
-        return (ret);
-    }
 }

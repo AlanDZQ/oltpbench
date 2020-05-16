@@ -42,19 +42,6 @@ import java.util.*;
 public abstract class BenchmarkModule {
     private static final Logger LOG = LoggerFactory.getLogger(BenchmarkModule.class);
 
-    /**
-     * Each benchmark must put their all of the DBMS-specific DDLs
-     * in this directory.
-     */
-    public static final String DDLS_DIR = "ddls";
-
-
-    /**
-     * Each dialect xml file  must put their all of the DBMS-specific DIALECTs
-     * in this directory.
-     */
-    public static final String DIALECTS_DIR = "dialects";
-
 
     /**
      * The workload configuration for this benchmark invocation
@@ -123,11 +110,10 @@ public abstract class BenchmarkModule {
     // --------------------------------------------------------------------------
 
     /**
-     * @param verbose
      * @return
      * @throws IOException
      */
-    protected abstract List<Worker<? extends BenchmarkModule>> makeWorkersImpl(boolean verbose) throws IOException;
+    protected abstract List<Worker<? extends BenchmarkModule>> makeWorkersImpl() throws IOException;
 
     /**
      * Each BenchmarkModule needs to implement this method to load a sample
@@ -155,13 +141,6 @@ public abstract class BenchmarkModule {
      */
     public Random rng() {
         return (this.rng);
-    }
-
-    /**
-     * @return
-     */
-    public String getDatabaseDDLPath() {
-        return (this.getDatabaseDDLPath(this.workConf.getDBType()));
     }
 
     /**
@@ -200,8 +179,8 @@ public abstract class BenchmarkModule {
     }
 
 
-    public final List<Worker<? extends BenchmarkModule>> makeWorkers(boolean verbose) throws IOException {
-        return (this.makeWorkersImpl(verbose));
+    public final List<Worker<? extends BenchmarkModule>> makeWorkers() throws IOException {
+        return (this.makeWorkersImpl());
     }
 
     /**
@@ -393,7 +372,7 @@ public abstract class BenchmarkModule {
             for (Class<? extends Procedure> procClass : this.supplementalProcedures) {
                 TransactionType txn = txns.getType(procClass);
                 if (txn == null) {
-                    txn = new TransactionType(procClass, procClass.hashCode(), true);
+                    txn = new TransactionType(procClass, procClass.hashCode());
                     txns.add(txn);
                 }
             } // FOR

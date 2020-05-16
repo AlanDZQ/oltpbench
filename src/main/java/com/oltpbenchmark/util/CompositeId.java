@@ -21,8 +21,6 @@ import com.oltpbenchmark.util.json.JSONException;
 import com.oltpbenchmark.util.json.JSONObject;
 import com.oltpbenchmark.util.json.JSONStringer;
 
-import java.io.IOException;
-
 /**
  * Pack multiple values into a single long using bit-shifting
  *
@@ -92,16 +90,6 @@ public abstract class CompositeId implements Comparable<CompositeId>, JSONSerial
     // -----------------------------------------------------------------
     // SERIALIZATION
     // -----------------------------------------------------------------
-
-    @Override
-    public void load(String input_path) throws IOException {
-        JSONUtil.load(this, input_path);
-    }
-
-    @Override
-    public void save(String output_path) throws IOException {
-        JSONUtil.save(this, output_path);
-    }
 
     @Override
     public String toJSONString() {

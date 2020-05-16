@@ -27,20 +27,15 @@ public class Column extends AbstractCatalogObject implements Cloneable {
 
     private final Table catalog_tbl;
     private final int type;
-    private final String typename;
     private final Integer size;
 
-    private String defaultValue;
     private boolean nullable = false;
-    private boolean autoincrement = false;
-    private boolean signed = false;
     private Column foreignkey = null;
 
-    public Column(Table catalog_tbl, String name, int type, String typename, Integer size) {
+    public Column(Table catalog_tbl, String name, int type, Integer size) {
         super(name);
         this.catalog_tbl = catalog_tbl;
         this.type = type;
-        this.typename = typename;
         this.size = size;
     }
 
@@ -73,26 +68,12 @@ public class Column extends AbstractCatalogObject implements Cloneable {
     }
 
     /**
-     * @return the typename
-     */
-    public String getTypename() {
-        return typename;
-    }
-
-    /**
      * Return the max size of this column
      *
      * @return the size
      */
     public Integer getSize() {
         return size;
-    }
-
-    /**
-     * @return the defaultValue
-     */
-    public String getDefaultValue() {
-        return defaultValue;
     }
 
     /**
@@ -103,20 +84,6 @@ public class Column extends AbstractCatalogObject implements Cloneable {
     }
 
     /**
-     * @return the autoincrement
-     */
-    public boolean isAutoincrement() {
-        return autoincrement;
-    }
-
-    /**
-     * @return the signed
-     */
-    public boolean isSigned() {
-        return signed;
-    }
-
-    /**
      * @return the foreign key parent for this column
      */
     public Column getForeignKey() {
@@ -124,31 +91,10 @@ public class Column extends AbstractCatalogObject implements Cloneable {
     }
 
     /**
-     * @param defaultValue the defaultValue to set
-     */
-    public void setDefaultValue(String defaultValue) {
-        this.defaultValue = defaultValue;
-    }
-
-    /**
      * @param nullable the nullable to set
      */
     public void setNullable(boolean nullable) {
         this.nullable = nullable;
-    }
-
-    /**
-     * @param autoincrement the autoincrement to set
-     */
-    public void setAutoincrement(boolean autoincrement) {
-        this.autoincrement = autoincrement;
-    }
-
-    /**
-     * @param signed the signed to set
-     */
-    public void setSigned(boolean signed) {
-        this.signed = signed;
     }
 
     /**

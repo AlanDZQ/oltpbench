@@ -139,8 +139,6 @@ usage: oltpbenchmark
                                 timestamp for the beginning of the
                                 experiment
  -ts,--tracescript <arg>        Script of transactions to execute
-    --upload <arg>              Upload the result
- -v,--verbose                   Display Messages
 ```
 
 ## How to see Postgres Driver logging
@@ -212,3 +210,4 @@ This fork contains a number of significant **structural** modifications to the o
 * Refactored `Worker` and `Loader` usage of `Connection` objects and cleaned up transaction handling
 * Introduced `HikariCP` as connection pool and `DataSource` instead of building connections from `DriverManager` as needed (default `poolsize` is 25)
 * Introduced [Dependabot](https://dependabot.com/) to keep Maven dependencies up to date
+* Removed `upload` and `verbose` options

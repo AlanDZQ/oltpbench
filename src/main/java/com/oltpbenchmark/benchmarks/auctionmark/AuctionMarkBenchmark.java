@@ -26,20 +26,13 @@ import com.oltpbenchmark.benchmarks.auctionmark.procedures.GetItem;
 import com.oltpbenchmark.benchmarks.auctionmark.procedures.LoadConfig;
 import com.oltpbenchmark.benchmarks.auctionmark.procedures.ResetDatabase;
 import com.oltpbenchmark.util.RandomGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AuctionMarkBenchmark extends BenchmarkModule {
-
-    private static final Logger LOG = LoggerFactory.getLogger(AuctionMarkBenchmark.class);
 
 
     private final RandomGenerator rng = new RandomGenerator((int) System.currentTimeMillis());
@@ -52,18 +45,6 @@ public class AuctionMarkBenchmark extends BenchmarkModule {
         this.registerSupplementalProcedure(ResetDatabase.class);
     }
 
-    public File getDataDir() {
-        URL url = AuctionMarkBenchmark.class.getResource("data");
-        if (url != null) {
-            try {
-                return new File(url.toURI().getPath());
-            } catch (URISyntaxException e) {
-                LOG.error(e.getMessage(), e);
-            }
-        }
-        return (null);
-    }
-
     public RandomGenerator getRandomGenerator() {
         return (this.rng);
     }
@@ -74,7 +55,7 @@ public class AuctionMarkBenchmark extends BenchmarkModule {
     }
 
     @Override
-    protected List<Worker<? extends BenchmarkModule>> makeWorkersImpl(boolean verbose) throws IOException {
+    protected List<Worker<? extends BenchmarkModule>> makeWorkersImpl() throws IOException {
         List<Worker<? extends BenchmarkModule>> workers = new ArrayList<>();
         for (int i = 0; i < workConf.getTerminals(); ++i) {
             workers.add(new AuctionMarkWorker(i, this));

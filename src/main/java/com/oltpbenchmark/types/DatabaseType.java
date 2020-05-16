@@ -30,41 +30,31 @@ public enum DatabaseType {
 
     /**
      * Parameters:
-     * (1) JDBC Driver String
      * (2) Should SQLUtil.getInsertSQL escape table/col names
      * (3) Should SQLUtil.getInsertSQL include col names
-     * (4) Does this DBMS support "real" transactions?
      */
-    DB2("com.ibm.db2.jcc.DB2Driver", true, false),
-    MYSQL("com.mysql.jdbc.Driver", true, false),
-    MYROCKS("com.mysql.jdbc.Driver", true, false),
-    POSTGRES("org.postgresql.Driver", false, false),
-    ORACLE("oracle.jdbc.driver.OracleDriver", true, false),
-    SQLSERVER("com.microsoft.sqlserver.jdbc.SQLServerDriver", true, false),
-    SQLITE("org.sqlite.JDBC", true, false),
-    HSQLDB("org.hsqldb.jdbcDriver", false, false),
-    H2("org.h2.Driver", true, false),
-    MONETDB("nl.cwi.monetdb.jdbc.MonetDriver", false, false),
-    NUODB("com.nuodb.jdbc.Driver", true, false),
-    TIMESTEN("com.timesten.jdbc.TimesTenDriver", true, false),
-    CASSANDRA("com.github.adejanovski.cassandra.jdbc.CassandraDriver", true, true),
-    MEMSQL("com.mysql.jdbc.Driver", true, false),
-    COCKROACHDB("org.postgresql.Driver", false, false),
+    DB2(true, false),
+    MYSQL(true, false),
+    MYROCKS(true, false),
+    POSTGRES(false, false),
+    ORACLE(true, false),
+    SQLSERVER(true, false),
+    SQLITE(true, false),
+    HSQLDB(false, false),
+    H2(true, false),
+    MONETDB(false, false),
+    NUODB(true, false),
+    TIMESTEN(true, false),
+    CASSANDRA(true, true),
+    MEMSQL(true, false),
+    COCKROACHDB(false, false),
     ;
 
-    private DatabaseType(String driver,
-                         boolean escapeNames,
+    private DatabaseType(boolean escapeNames,
                          boolean includeColNames) {
-        this.driver = driver;
         this.escapeNames = escapeNames;
         this.includeColNames = includeColNames;
     }
-
-    /**
-     * This is the suggested driver string to use in the configuration xml
-     * This corresponds to the <B>'driver'</b> attribute.
-     */
-    private final String driver;
 
     /**
      * If this flag is set to true, then the framework will escape names in
@@ -82,15 +72,6 @@ public enum DatabaseType {
     // ---------------------------------------------------------------
     // ACCESSORS
     // ----------------------------------------------------------------
-
-    /**
-     * Returns the suggested driver string to use for the given database type
-     *
-     * @return
-     */
-    public String getSuggestedDriver() {
-        return (this.driver);
-    }
 
     /**
      * Returns true if the framework should escape the names of columns/tables when

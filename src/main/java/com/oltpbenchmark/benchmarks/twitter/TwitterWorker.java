@@ -96,7 +96,7 @@ public class TwitterWorker extends Worker<TwitterBenchmark> {
         InsertTweet proc = this.getProcedure(InsertTweet.class);
 
         Time time = new Time(System.currentTimeMillis());
-        proc.run(conn, uid, text, time);
+        proc.run(conn, uid, text);
 
     }
 }

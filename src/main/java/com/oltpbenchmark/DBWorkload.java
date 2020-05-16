@@ -394,13 +394,11 @@ public class DBWorkload {
         }
 
 
-        @Deprecated boolean verbose = argsLine.hasOption("v");
-
         // Create the Benchmark's Database
         if (isBooleanOptionSet(argsLine, "create")) {
             for (BenchmarkModule benchmark : benchList) {
                 LOG.info("Creating new {} database...", benchmark.getBenchmarkName().toUpperCase());
-                runCreator(benchmark, verbose);
+                runCreator(benchmark);
                 LOG.info("Finished creating new {} database...", benchmark.getBenchmarkName().toUpperCase());
             }
         } else  {
@@ -422,7 +420,7 @@ public class DBWorkload {
         if (isBooleanOptionSet(argsLine, "load")) {
             for (BenchmarkModule benchmark : benchList) {
                 LOG.info("Loading data into {} database...", benchmark.getBenchmarkName().toUpperCase());
-                runLoader(benchmark, verbose);
+                runLoader(benchmark);
                 LOG.info("Finished loading data into {} database...", benchmark.getBenchmarkName().toUpperCase());
             }
         } else {
@@ -444,7 +442,7 @@ public class DBWorkload {
             // Bombs away!
             Results r = null;
             try {
-                r = runWorkload(benchList, verbose, intervalMonitor);
+                r = runWorkload(benchList, intervalMonitor);
             } catch (Throwable ex) {
                 LOG.error("Unexpected error when running benchmarks.", ex);
                 System.exit(1);
@@ -452,7 +450,7 @@ public class DBWorkload {
 
 
             // WRITE OUTPUT
-            writeOutputs(r, activeTXTypes, argsLine, xmlConfig);
+            writeOutputs(r, activeTXTypes, argsLine);
 
             // WRITE HISTOGRAMS
             if (argsLine.hasOption("histograms")) {
@@ -474,9 +472,7 @@ public class DBWorkload {
         options.addOption(null, "load", true, "Load data using the benchmark's data loader");
         options.addOption(null, "execute", true, "Execute the benchmark workload");
         options.addOption(null, "runscript", true, "Run an SQL script");
-        options.addOption(null, "upload", true, "Upload the result");
 
-        options.addOption("v", "verbose", false, "Display Messages");
         options.addOption("h", "help", false, "Print this help");
         options.addOption("s", "sample", true, "Sampling window");
         options.addOption("im", "interval-monitor", true, "Throughput Monitoring Interval in milliseconds");
@@ -527,10 +523,9 @@ public class DBWorkload {
      * @param r
      * @param activeTXTypes
      * @param argsLine
-     * @param xmlConfig
      * @throws Exception
      */
-    private static void writeOutputs(Results r, List<TransactionType> activeTXTypes, CommandLine argsLine, XMLConfiguration xmlConfig) throws Exception {
+    private static void writeOutputs(Results r, List<TransactionType> activeTXTypes, CommandLine argsLine) throws Exception {
 
         // If an output directory is used, store the information
         String outputDirectory = "results";
@@ -542,12 +537,6 @@ public class DBWorkload {
             filePrefix = TimeUtil.getCurrentTime().getTime() + "_";
         }
 
-        // Special result uploader
-        ResultUploader ru = null;
-        if (xmlConfig.containsKey("uploadUrl")) {
-            ru = new ResultUploader(r, xmlConfig, argsLine);
-            LOG.info("Upload Results URL: {}", ru);
-        }
 
         // Output target 
         PrintStream ps = null;
@@ -593,43 +582,9 @@ public class DBWorkload {
                 rs.close();
             }
 
-            // Result Uploader Files
-            if (ru != null) {
-                // Summary Data
-                nextName = FileUtil.getNextFilename(FileUtil.joinPath(outputDirectory, baseFile + ".summary"));
-                PrintStream ss = new PrintStream(new File(nextName));
-                LOG.info("Output summary data into file: {}", nextName);
-                ru.writeSummary(ss);
-                ss.close();
-
-                // DBMS Parameters
-                nextName = FileUtil.getNextFilename(FileUtil.joinPath(outputDirectory, baseFile + ".params"));
-                ss = new PrintStream(new File(nextName));
-                LOG.info("Output DBMS parameters into file: {}", nextName);
-                ru.writeDBParameters(ss);
-                ss.close();
-
-                // DBMS Metrics
-                nextName = FileUtil.getNextFilename(FileUtil.joinPath(outputDirectory, baseFile + ".metrics"));
-                ss = new PrintStream(new File(nextName));
-                LOG.info("Output DBMS metrics into file: {}", nextName);
-                ru.writeDBMetrics(ss);
-                ss.close();
-
-                // Experiment Configuration
-                nextName = FileUtil.getNextFilename(FileUtil.joinPath(outputDirectory, baseFile + ".expconfig"));
-                ss = new PrintStream(new File(nextName));
-                LOG.info("Output experiment config into file: {}", nextName);
-                ru.writeBenchmarkConf(ss);
-                ss.close();
-            }
 
         } else if (LOG.isDebugEnabled()) {
             LOG.debug("No output file specified");
-        }
-
-        if (isBooleanOptionSet(argsLine, "upload") && ru != null) {
-            ru.uploadResult(activeTXTypes);
         }
 
         // SUMMARY FILE
@@ -675,22 +630,22 @@ public class DBWorkload {
         bench.runScript(script);
     }
 
-    private static void runCreator(BenchmarkModule bench, boolean verbose) {
+    private static void runCreator(BenchmarkModule bench) {
         LOG.debug(String.format("Creating %s Database", bench));
         bench.createDatabase();
     }
 
-    private static void runLoader(BenchmarkModule bench, boolean verbose) {
+    private static void runLoader(BenchmarkModule bench) {
         LOG.debug(String.format("Loading %s Database", bench));
         bench.loadDatabase();
     }
 
-    private static Results runWorkload(List<BenchmarkModule> benchList, boolean verbose, int intervalMonitor) throws QueueLimitException, IOException {
+    private static Results runWorkload(List<BenchmarkModule> benchList, int intervalMonitor) throws QueueLimitException, IOException {
         List<Worker<?>> workers = new ArrayList<>();
         List<WorkloadConfiguration> workConfs = new ArrayList<>();
         for (BenchmarkModule bench : benchList) {
             LOG.info("Creating {} virtual terminals...", bench.getWorkloadConfiguration().getTerminals());
-            workers.addAll(bench.makeWorkers(verbose));
+            workers.addAll(bench.makeWorkers());
             // LOG.info("done.");
 
             int num_phases = bench.getWorkloadConfiguration().getNumberOfPhases();

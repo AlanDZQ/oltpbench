@@ -17,16 +17,11 @@
 
 package com.oltpbenchmark.util;
 
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
@@ -36,10 +31,6 @@ import java.util.regex.Pattern;
  * @author Djellel
  */
 public abstract class StringUtil {
-
-    public static final String SPACER = "   ";
-    public static final String DOUBLE_LINE = StringUtil.repeat("=", 64) + "\n";
-    public static final String SINGLE_LINE = StringUtil.repeat("-", 64) + "\n";
 
     private static final Pattern LINE_SPLIT = Pattern.compile("\n");
     private static final Pattern TITLE_SPLIT = Pattern.compile(" ");
@@ -51,110 +42,6 @@ public abstract class StringUtil {
     private static Integer CACHE_REPEAT_SIZE = null;
     private static String CACHE_REPEAT_RESULT = null;
 
-    private static final double BASE = 1024, KB = BASE, MB = KB * BASE, GB = MB * BASE;
-    private static final DecimalFormat df = new DecimalFormat("#.##");
-
-    /**
-     * http://ubuntuforums.org/showpost.php?p=10215516&postcount=5
-     *
-     * @param bytes
-     * @return
-     */
-    public static String formatSize(double bytes) {
-        if (bytes >= GB) {
-            return df.format(bytes / GB) + " GB";
-        } else if (bytes >= MB) {
-            return df.format(bytes / MB) + " MB";
-        } else if (bytes >= KB) {
-            return df.format(bytes / KB) + " KB";
-        }
-        return "" + (int) bytes + " bytes";
-    }
-
-    /**
-     * @param str
-     * @return
-     */
-    public static String[] splitLines(String str) {
-        return (str != null ? LINE_SPLIT.split(str) : null);
-    }
-
-    public static String header(String msg) {
-        return StringUtil.header(msg, "-", 100);
-    }
-
-    /**
-     * Create a nicely format header string where the given message is surround
-     * on both sides by the marker.
-     * Example:   "---------- MSG ----------"
-     *
-     * @param msg
-     * @param marker
-     * @param length
-     * @return
-     */
-    public static String header(String msg, String marker, int length) {
-        int msg_length = msg.length();
-        length = Math.max(msg_length, length);
-        int border_len = (length - msg_length - 2) / 2;
-        String border = StringUtil.repeat(marker, border_len);
-        boolean add_extra = (border_len + msg_length + 2 + 1 == length);
-        return String.format("%s %s %s%s", border, msg, border, (add_extra ? marker : ""));
-    }
-
-
-    /**
-     * Return the MD5 checksum of the given string
-     *
-     * @param input
-     * @return
-     */
-    public static String md5sum(String input) {
-        MessageDigest digest = null;
-        try {
-            digest = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException ex) {
-            throw new RuntimeException("Unable to compute md5sum for string", ex);
-        }
-
-        digest.update(input.getBytes());
-        BigInteger hash = new BigInteger(1, digest.digest());
-        return (hash.toString(16));
-    }
-
-    /**
-     * Split the multi-lined strings into separate columns
-     *
-     * @param strs
-     * @return
-     */
-    public static String columns(String... strs) {
-        String[][] lines = new String[strs.length][];
-        String[] prefixes = new String[strs.length];
-        int max_length = 0;
-        int max_lines = 0;
-
-        for (int i = 0; i < strs.length; i++) {
-            lines[i] = LINE_SPLIT.split(strs[i]);
-            prefixes[i] = (i == 0 ? "" : " \u2503 ");
-            for (String line : lines[i]) {
-                max_length = Math.max(max_length, line.length());
-            } // FOR
-            max_lines = Math.max(max_lines, lines[i].length);
-        } // FOR
-
-        String f = "%-" + max_length + "s";
-        StringBuilder sb = new StringBuilder();
-        for (int ii = 0; ii < max_lines; ii++) {
-            for (int i = 0; i < strs.length; i++) {
-                String line = (ii >= lines[i].length ? "" : lines[i][ii]);
-                sb.append(prefixes[i]).append(String.format(f, line));
-            } // FOR
-            sb.append("\n");
-        } // FOR
-
-        return (sb.toString());
-    }
 
     /**
      * Return key/value maps into a nicely formatted table
@@ -165,18 +52,6 @@ public abstract class StringUtil {
      */
     public static String formatMaps(Map<?, ?>... maps) {
         return (formatMaps(":", false, false, false, false, true, true, maps));
-    }
-
-    /**
-     * Return key/value maps into a nicely formatted table using the given delimiter
-     * No Uppercase Keys, No Boxing
-     *
-     * @param delimiter
-     * @param maps
-     * @return
-     */
-    public static String formatMaps(String delimiter, Map<?, ?>... maps) {
-        return (formatMaps(delimiter, false, false, false, false, true, true, maps));
     }
 
     /**
@@ -336,14 +211,6 @@ public abstract class StringUtil {
     }
 
     /**
-     * @param maps
-     * @return
-     */
-    public static String formatMapsBoxed(Map<?, ?>... maps) {
-        return (formatMaps(":", false, true, false, false, true, true, maps));
-    }
-
-    /**
      * Returns the given string repeated the given # of times
      *
      * @param str
@@ -380,17 +247,6 @@ public abstract class StringUtil {
     }
 
     /**
-     * Make a box around some text using the given marker character.
-     *
-     * @param str
-     * @param mark
-     * @return
-     */
-    public static String box(String str, String mark) {
-        return (StringUtil.box(str, mark, null));
-    }
-
-    /**
      * Create a box around some text
      *
      * @param str
@@ -422,26 +278,6 @@ public abstract class StringUtil {
         } // FOR
         sb.append(top_line);
 
-        return (sb.toString());
-    }
-
-    /**
-     * Append the prefix to the beginning of each line in str
-     *
-     * @param str
-     * @param prefix
-     * @return
-     */
-    public static String prefix(String str, String prefix) {
-        String[] lines = LINE_SPLIT.split(str);
-        if (lines.length == 0) {
-            return "";
-        }
-
-        StringBuilder sb = new StringBuilder();
-        for (String line : lines) {
-            sb.append(prefix).append(line).append("\n");
-        } // FOR
         return (sb.toString());
     }
 
@@ -515,20 +351,6 @@ public abstract class StringUtil {
     }
 
     /**
-     * Append SPACER to the front of each line in a string
-     *
-     * @param str
-     * @return
-     */
-    public static String addSpacers(String str) {
-        StringBuilder sb = new StringBuilder();
-        for (String line : LINE_SPLIT.split(str)) {
-            sb.append(SPACER).append(line).append("\n");
-        } // FOR
-        return (sb.toString());
-    }
-
-    /**
      * Python join()
      *
      * @param <T>
@@ -538,10 +360,6 @@ public abstract class StringUtil {
      */
     public static <T> String join(String delimiter, T... items) {
         return (join(delimiter, Arrays.asList(items)));
-    }
-
-    public static <T> String join(String delimiter, final Iterator<T> items) {
-        return (join("", delimiter, CollectionUtil.iterable(items)));
     }
 
     /**

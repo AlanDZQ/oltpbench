@@ -41,11 +41,6 @@ import java.util.regex.Pattern;
 public final class Catalog {
     private static final Logger LOG = LoggerFactory.getLogger(Catalog.class);
 
-    /**
-     * TODO
-     */
-    private static String separator;
-
     private static final Random rand = new Random();
 
 
@@ -54,7 +49,6 @@ public final class Catalog {
      * extract all of the catalog information that we need
      */
     private static final String DB_CONNECTION = "jdbc:hsqldb:mem:";
-    private static final String DB_JDBC = "org.hsqldb.jdbcDriver";
     private static final DatabaseType DB_TYPE = DatabaseType.HSQLDB;
 
 //    private static final String DB_CONNECTION = "jdbc:h2:mem:";
@@ -89,10 +83,6 @@ public final class Catalog {
 
     public int getTableCount() {
         return (this.tables.size());
-    }
-
-    public Collection<String> getTableNames() {
-        return (this.tables.keySet());
     }
 
     public Collection<Table> getTables() {
@@ -163,13 +153,9 @@ public final class Catalog {
                             int col_type = col_rs.getInt(5);
                             String col_typename = col_rs.getString(6);
                             Integer col_size = col_rs.getInt(7);
-                            String col_defaultValue = col_rs.getString(13);
                             boolean col_nullable = col_rs.getString(18).equalsIgnoreCase("YES");
-                            boolean col_autoinc = false; // FIXME col_rs.getString(22).toUpperCase().equals("YES");
 
-                            Column catalog_col = new Column(catalog_tbl, col_name, col_type, col_typename, col_size);
-                            catalog_col.setDefaultValue(col_defaultValue);
-                            catalog_col.setAutoincrement(col_autoinc);
+                            Column catalog_col = new Column(catalog_tbl, col_name, col_type, col_size);
                             catalog_col.setNullable(col_nullable);
                             // FIXME col_catalog.setSigned();
 
@@ -211,9 +197,7 @@ public final class Catalog {
                             if (LOG.isDebugEnabled()) {
                                 LOG.debug(SQLUtil.debug(idx_rs));
                             }
-                            boolean idx_unique = (idx_rs.getBoolean(4) == false);
                             String idx_name = idx_rs.getString(6);
-                            int idx_type = idx_rs.getShort(7);
                             int idx_col_pos = idx_rs.getInt(8) - 1;
                             String idx_col_name = idx_rs.getString(9);
                             String sort = idx_rs.getString(10);
@@ -226,7 +210,7 @@ public final class Catalog {
 
                             Index catalog_idx = catalog_tbl.getIndex(idx_name);
                             if (catalog_idx == null) {
-                                catalog_idx = new Index(catalog_tbl, idx_name, idx_type, idx_unique);
+                                catalog_idx = new Index(idx_name);
                                 catalog_tbl.addIndex(catalog_idx);
                             }
 
@@ -316,18 +300,6 @@ public final class Catalog {
         }
 
         return (origTableNames);
-    }
-
-    public static void setSeparator(Connection c) throws SQLException {
-        Catalog.separator = c.getMetaData().getIdentifierQuoteString();
-    }
-
-    public static void setSeparator(String separator) throws SQLException {
-        Catalog.separator = separator;
-    }
-
-    public static String getSeparator() {
-        return separator;
     }
 
     @Override

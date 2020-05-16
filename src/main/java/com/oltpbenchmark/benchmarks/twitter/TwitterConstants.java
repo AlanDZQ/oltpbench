@@ -39,18 +39,6 @@ public abstract class TwitterConstants {
      */
     public static final int MAX_FOLLOW_PER_USER = 50;
 
-    /**
-     * Message length (inclusive)
-     */
-    public static final int MAX_TWEET_LENGTH = 140;
-
-    /**
-     * Name length (inclusive)
-     */
-    public static final int MIN_NAME_LENGTH = 3;
-    public static final int MAX_NAME_LENGTH = 20;
-    // TODO: make the next parameters of WorkLoadConfiguration
-    public static int LIMIT_TWEETS = 100;
     public static int LIMIT_TWEETS_FOR_UID = 10;
     public static int LIMIT_FOLLOWERS = 20;
 

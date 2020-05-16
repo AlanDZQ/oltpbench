@@ -70,10 +70,6 @@ public abstract class Loader<T extends BenchmarkModule> {
      */
     public abstract List<LoaderThread> createLoaderThreads() throws SQLException;
 
-    public void setTableCount(String tableName, int size) {
-        this.tableSizes.set(tableName, size);
-    }
-
     public void addToTableCount(String tableName, int delta) {
         this.tableSizes.put(tableName, delta);
     }

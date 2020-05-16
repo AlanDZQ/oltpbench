@@ -23,7 +23,6 @@ import com.oltpbenchmark.util.json.JSONStringer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -69,53 +68,6 @@ public abstract class JSONUtil {
     }
 
     /**
-     * JSON Pretty Print
-     *
-     * @param json
-     * @return
-     * @throws JSONException
-     */
-    public static String format(String json) {
-        try {
-            return (JSONUtil.format(new JSONObject(json)));
-        } catch (RuntimeException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    /**
-     * JSON Pretty Print
-     *
-     * @param <T>
-     * @param object
-     * @return
-     */
-    public static <T extends JSONSerializable> String format(T object) {
-        JSONStringer stringer = new JSONStringer();
-        try {
-            if (object instanceof JSONObject) {
-                return ((JSONObject) object).toString(2);
-            }
-            stringer.object();
-            object.toJSON(stringer);
-            stringer.endObject();
-        } catch (JSONException ex) {
-            throw new RuntimeException(ex);
-        }
-        return (JSONUtil.format(stringer.toString()));
-    }
-
-    public static String format(JSONObject o) {
-        try {
-            return o.toString(1);
-        } catch (JSONException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    /**
      * @param <T>
      * @param object
      * @return
@@ -149,29 +101,6 @@ public abstract class JSONUtil {
     }
 
     /**
-     * Write the contents of a JSONSerializable object out to a file on the local disk
-     *
-     * @param <T>
-     * @param object
-     * @param output_path
-     * @throws IOException
-     */
-    public static <T extends JSONSerializable> void save(T object, String output_path) throws IOException {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Writing out contents of {} to '{}'", object.getClass().getSimpleName(), output_path);
-        }
-        File f = new File(output_path);
-        try {
-            FileUtil.makeDirIfNotExists(f.getParent());
-            String json = object.toJSONString();
-            FileUtil.writeStringToFile(f, format(json));
-        } catch (Exception ex) {
-            LOG.error("Failed to serialize the {} file '{}'", object.getClass().getSimpleName(), f, ex);
-            throw new IOException(ex);
-        }
-    }
-
-    /**
      * Load in a JSONSerialable stored in a file
      *
      * @param <T>
@@ -195,27 +124,6 @@ public abstract class JSONUtil {
         }
         if (LOG.isDebugEnabled()) {
             LOG.debug("The loading of the {} is complete", object.getClass().getSimpleName());
-        }
-    }
-
-    /**
-     * For a given Enum, write out the contents of the corresponding field to the JSONObject
-     * We assume that the given object has matching fields that correspond to the Enum members, except
-     * that their names are lower case.
-     *
-     * @param <E>
-     * @param <T>
-     * @param stringer
-     * @param object
-     * @param base_class
-     * @param members
-     * @throws JSONException
-     */
-    public static <E extends Enum<?>, T> void fieldsToJSON(JSONStringer stringer, T object, Class<? extends T> base_class, E[] members) throws JSONException {
-        try {
-            fieldsToJSON(stringer, object, base_class, ClassUtil.getFieldsFromMembersEnum(base_class, members));
-        } catch (NoSuchFieldException ex) {
-            throw new JSONException(ex);
         }
     }
 
@@ -492,42 +400,6 @@ public abstract class JSONUtil {
     }
 
     /**
-     * For the given enum, load in the values from the JSON object into the current object
-     * This will throw errors if a field is missing
-     *
-     * @param <E>
-     * @param json_object
-     * @param catalog_db
-     * @param members
-     * @throws JSONException
-     */
-    public static <E extends Enum<?>, T> void fieldsFromJSON(JSONObject json_object, T object, Class<? extends T> base_class, E... members) throws JSONException {
-        JSONUtil.fieldsFromJSON(json_object, object, base_class, false, members);
-    }
-
-    /**
-     * For the given enum, load in the values from the JSON object into the current object
-     * If ignore_missing is false, then JSONUtil will not throw an error if a field is missing
-     *
-     * @param <E>
-     * @param <T>
-     * @param json_object
-     * @param catalog_db
-     * @param object
-     * @param base_class
-     * @param ignore_missing
-     * @param members
-     * @throws JSONException
-     */
-    public static <E extends Enum<?>, T> void fieldsFromJSON(JSONObject json_object, T object, Class<? extends T> base_class, boolean ignore_missing, E... members) throws JSONException {
-        try {
-            fieldsFromJSON(json_object, object, base_class, ignore_missing, ClassUtil.getFieldsFromMembersEnum(base_class, members));
-        } catch (NoSuchFieldException ex) {
-            throw new JSONException(ex);
-        }
-    }
-
-    /**
      * For the given list of Fields, load in the values from the JSON object into the current object
      * If ignore_missing is false, then JSONUtil will not throw an error if a field is missing
      *
@@ -676,60 +548,4 @@ public abstract class JSONUtil {
         return (value);
     }
 
-    public static Class<?> getPrimitiveType(String json_value) {
-        Object value = null;
-
-        // Class
-        try {
-            value = ClassUtil.getClass(json_value);
-            if (value != null) {
-                return (Class.class);
-            }
-        } catch (Throwable ignored) {
-        } // IGNORE
-
-        // Short
-        try {
-            value = Short.parseShort(json_value);
-            return (Short.class);
-        } catch (NumberFormatException ignored) {
-        } // IGNORE
-
-        // Integer
-        try {
-            value = Integer.parseInt(json_value);
-            return (Integer.class);
-        } catch (NumberFormatException ignored) {
-        } // IGNORE
-
-        // Long
-        try {
-            value = Long.parseLong(json_value);
-            return (Long.class);
-        } catch (NumberFormatException ignored) {
-        } // IGNORE
-
-        // Float
-        try {
-            value = Float.parseFloat(json_value);
-            return (Float.class);
-        } catch (NumberFormatException ignored) {
-        } // IGNORE
-
-        // Double
-        try {
-            value = Double.parseDouble(json_value);
-            return (Double.class);
-        } catch (NumberFormatException ignored) {
-        } // IGNORE
-
-
-        // Boolean
-        if (json_value.equalsIgnoreCase("true") || json_value.equalsIgnoreCase("false")) {
-            return (Boolean.class);
-        }
-
-        // Default: String
-        return (String.class);
-    }
 }

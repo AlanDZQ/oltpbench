@@ -18,7 +18,6 @@ package com.oltpbenchmark.api;
 
 import com.oltpbenchmark.*;
 import com.oltpbenchmark.api.Procedure.UserAbortException;
-import com.oltpbenchmark.catalog.Catalog;
 import com.oltpbenchmark.types.DatabaseType;
 import com.oltpbenchmark.types.State;
 import com.oltpbenchmark.types.TransactionStatus;
@@ -100,19 +99,8 @@ public abstract class Worker<T extends BenchmarkModule> implements Runnable {
         return String.format("%s<%03d>", this.getClass().getSimpleName(), this.getId());
     }
 
-    /**
-     * Get the the total number of workers in this benchmark invocation
-     */
-    public final int getNumWorkers() {
-        return (this.benchmarkModule.getWorkloadConfiguration().getTerminals());
-    }
-
     public final WorkloadConfiguration getWorkloadConfiguration() {
         return (this.benchmarkModule.getWorkloadConfiguration());
-    }
-
-    public final Catalog getCatalog() {
-        return (this.benchmarkModule.getCatalog());
     }
 
     public final Random rng() {
@@ -164,10 +152,6 @@ public abstract class Worker<T extends BenchmarkModule> implements Runnable {
 
     public final Map<TransactionType, Histogram<String>> getTransactionAbortMessageHistogram() {
         return (this.txnAbortMessages);
-    }
-
-    synchronized public void setCurrStatement(Statement s) {
-        this.currStatement = s;
     }
 
     /**
@@ -270,7 +254,7 @@ public abstract class Worker<T extends BenchmarkModule> implements Runnable {
 
             TransactionType type = invalidTT;
             try {
-                type = doWork(preState == State.MEASURE, pieceOfWork);
+                type = doWork(pieceOfWork);
             } catch (IndexOutOfBoundsException e) {
                 if (phase.isThroughputRun()) {
                     LOG.error("Thread tried executing disabled phase!");
@@ -340,7 +324,7 @@ public abstract class Worker<T extends BenchmarkModule> implements Runnable {
      *
      * @param llr
      */
-    protected final TransactionType doWork(boolean measure, SubmittedProcedure pieceOfWork) {
+    protected final TransactionType doWork(SubmittedProcedure pieceOfWork) {
 
         final DatabaseType type = configuration.getDBType();
         final boolean recordAbortMessages = configuration.getRecordAbortMessages();

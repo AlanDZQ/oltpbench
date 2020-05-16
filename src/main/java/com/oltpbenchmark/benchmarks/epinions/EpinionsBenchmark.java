@@ -49,7 +49,7 @@ public class EpinionsBenchmark extends BenchmarkModule {
     }
 
     @Override
-    protected List<Worker<? extends BenchmarkModule>> makeWorkersImpl(boolean verbose) throws IOException {
+    protected List<Worker<? extends BenchmarkModule>> makeWorkersImpl() throws IOException {
         List<Worker<? extends BenchmarkModule>> workers = new ArrayList<>();
 
         try {
@@ -63,7 +63,7 @@ public class EpinionsBenchmark extends BenchmarkModule {
 
             ArrayList<String> user_ids = new ArrayList<>();
             ArrayList<String> item_ids = new ArrayList<>();
-            String userCount = SQLUtil.selectColValues(this.workConf.getDBType(), t, "u_id");
+            String userCount = SQLUtil.selectColValues(t, "u_id");
 
             try (Connection metaConn = this.getConnection()) {
                 try (Statement stmt = metaConn.createStatement()) {
@@ -79,7 +79,7 @@ public class EpinionsBenchmark extends BenchmarkModule {
                     t = this.catalog.getTable("ITEM");
 
 
-                    String itemCount = SQLUtil.selectColValues(this.workConf.getDBType(), t, "i_id");
+                    String itemCount = SQLUtil.selectColValues(t, "i_id");
                     try (ResultSet res = stmt.executeQuery(itemCount)) {
                         while (res.next()) {
                             item_ids.add(res.getString(1));

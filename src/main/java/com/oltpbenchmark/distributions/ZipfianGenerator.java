@@ -231,17 +231,6 @@ public class ZipfianGenerator extends IntegerGenerator {
     /****************************************************************************************/
 
     /**
-     * Generate the next item. this distribution will be skewed toward lower integers; e.g. 0 will
-     * be the most popular, 1 the next most popular, etc.
-     *
-     * @param itemcount The number of items in the distribution.
-     * @return The next item in the sequence.
-     */
-    public int nextInt(int itemcount) {
-        return (int) nextLong(itemcount);
-    }
-
-    /**
      * Generate the next item as a long.
      *
      * @param itemcount The number of items in the distribution.
@@ -288,7 +277,7 @@ public class ZipfianGenerator extends IntegerGenerator {
         }
 
         long ret = base + (long) ((itemcount) * Math.pow(eta * u - eta + 1, alpha));
-        setLastInt((int) ret);
+        setLastInt();
         return ret;
     }
 
@@ -297,7 +286,6 @@ public class ZipfianGenerator extends IntegerGenerator {
      * by the 2nd, etc. (Or, if min != 0, the min-th item is the most popular, the min+1th item the next most popular, etc.) If you want the
      * popular items scattered throughout the item space, use ScrambledZipfianGenerator instead.
      */
-    @Override
     public int nextInt() {
         return (int) nextLong(items);
     }
@@ -311,11 +299,4 @@ public class ZipfianGenerator extends IntegerGenerator {
         return nextLong(items);
     }
 
-    /**
-     * @todo Implement ZipfianGenerator.mean()
-     */
-    @Override
-    public double mean() {
-        throw new UnsupportedOperationException("@todo implement ZipfianGenerator.mean()");
-    }
 }

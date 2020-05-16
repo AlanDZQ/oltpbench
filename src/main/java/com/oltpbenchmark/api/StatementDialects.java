@@ -249,15 +249,6 @@ public class StatementDialects {
     }
 
     /**
-     * Return the list of Procedure names that we have dialect information for
-     *
-     * @return
-     */
-    protected Collection<String> getProcedureNames() {
-        return (this.dialectsMap.keySet());
-    }
-
-    /**
      * Return the list of Statement names that we have dialect information
      * for the given Procedure name. If there are SQL dialects for the given
      * Procedure, then the result will be null.

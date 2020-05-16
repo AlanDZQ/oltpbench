@@ -78,29 +78,12 @@ public abstract class AuctionMarkConstants {
     // STORED PROCEDURE INFORMATION
     // ----------------------------------------------------------------
 
-    // Non-standard txns
-    public static final int FREQUENCY_CLOSE_AUCTIONS = -1; // called at regular intervals
-
-    // Regular Txn Mix
-    public static final int FREQUENCY_GET_ITEM = 25;
-    public static final int FREQUENCY_GET_USER_INFO = 15;
-    public static final int FREQUENCY_NEW_BID = 20;
-    public static final int FREQUENCY_NEW_COMMENT = 5;
-    public static final int FREQUENCY_NEW_COMMENT_RESPONSE = 5;
-    public static final int FREQUENCY_NEW_FEEDBACK = 5;
-    public static final int FREQUENCY_NEW_ITEM = 10;
-    public static final int FREQUENCY_NEW_PURCHASE = 5;
-    public static final int FREQUENCY_UPDATE_ITEM = 10;
-
     // ----------------------------------------------------------------
     // DEFAULT TABLE SIZES
     // ----------------------------------------------------------------
 
     public static final long TABLESIZE_REGION = 75;
-    public static final long TABLESIZE_GLOBAL_ATTRIBUTE_GROUP = 100;
-    public static final long TABLESIZE_GLOBAL_ATTRIBUTE_VALUE = 1; // HACK: IGNORE
     public static final long TABLESIZE_GLOBAL_ATTRIBUTE_VALUE_PER_GROUP = 10;
-    public static final long TABLESIZE_USERACCT = 10000;
 
     // ----------------------------------------------------------------
     // USER PARAMETERS
@@ -245,25 +228,6 @@ public abstract class AuctionMarkConstants {
     public static final String TABLENAME_ITEM_MAX_BID = "ITEM_MAX_BID";
     public static final String TABLENAME_ITEM_PURCHASE = "ITEM_PURCHASE";
 
-    public static final String[] TABLENAMES = {
-            AuctionMarkConstants.TABLENAME_REGION,
-            AuctionMarkConstants.TABLENAME_CATEGORY,
-            AuctionMarkConstants.TABLENAME_GLOBAL_ATTRIBUTE_GROUP,
-            AuctionMarkConstants.TABLENAME_GLOBAL_ATTRIBUTE_VALUE,
-            AuctionMarkConstants.TABLENAME_USERACCT,
-            AuctionMarkConstants.TABLENAME_USERACCT_ATTRIBUTES,
-            AuctionMarkConstants.TABLENAME_USERACCT_ITEM,
-            AuctionMarkConstants.TABLENAME_USERACCT_WATCH,
-            AuctionMarkConstants.TABLENAME_USERACCT_FEEDBACK,
-            AuctionMarkConstants.TABLENAME_ITEM,
-            AuctionMarkConstants.TABLENAME_ITEM_ATTRIBUTE,
-            AuctionMarkConstants.TABLENAME_ITEM_IMAGE,
-            AuctionMarkConstants.TABLENAME_ITEM_COMMENT,
-            AuctionMarkConstants.TABLENAME_ITEM_BID,
-            AuctionMarkConstants.TABLENAME_ITEM_MAX_BID,
-            AuctionMarkConstants.TABLENAME_ITEM_PURCHASE,
-    };
-
     // ----------------------------------------------------------------
     // TABLE DATA SOURCES
     // ----------------------------------------------------------------
@@ -331,10 +295,5 @@ public abstract class AuctionMarkConstants {
      * The probability that the NewBid txn will try to bid on a closed item (1-100)
      */
     public static final int PROB_NEWBID_CLOSED_ITEM = 5;
-
-    /**
-     * The probability that a NewBid txn will target an item whose auction is ending soon (1-100)
-     */
-    public static final int PROB_NEWBID_ENDINGSOON_ITEM = 50;
 
 }

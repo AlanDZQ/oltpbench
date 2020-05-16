@@ -27,8 +27,6 @@ import com.oltpbenchmark.util.RandomDistribution.Flat;
 import com.oltpbenchmark.util.RandomDistribution.Zipf;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.map.ListOrderedMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
@@ -433,20 +431,8 @@ public class AuctionMarkLoader extends Loader<AuctionMarkBenchmark> {
             this.subGenerator_hold.add(obj);
         }
 
-        public boolean hasSubTableGenerators() {
-            return (!this.sub_generators.isEmpty());
-        }
-
         public Collection<SubTableGenerator<?>> getSubTableGenerators() {
             return (this.sub_generators);
-        }
-
-        public Collection<String> getSubGeneratorTableNames() {
-            List<String> names = new ArrayList<>();
-            for (AbstractTableGenerator gen : this.sub_generators) {
-                names.add(gen.catalog_tbl.getName());
-            }
-            return (names);
         }
 
         protected int populateRandomColumns(Object[] row) {
@@ -478,15 +464,6 @@ public class AuctionMarkLoader extends Loader<AuctionMarkBenchmark> {
         }
 
         /**
-         * Return the table's catalog object for this generator
-         *
-         * @return
-         */
-        public Table getTableCatalog() {
-            return (this.catalog_tbl);
-        }
-
-        /**
          * Return the VoltTable handle
          *
          * @return
@@ -496,39 +473,12 @@ public class AuctionMarkLoader extends Loader<AuctionMarkBenchmark> {
         }
 
         /**
-         * Returns the number of tuples that will be loaded into this table
-         *
-         * @return
-         */
-        public Long getTableSize() {
-            return this.tableSize;
-        }
-
-        /**
-         * Returns the number of tuples per batch that this generator will want loaded
-         *
-         * @return
-         */
-        public int getBatchSize() {
-            return this.batchSize;
-        }
-
-        /**
          * Returns the name of the table this this generates
          *
          * @return
          */
         public String getTableName() {
             return this.tableName;
-        }
-
-        /**
-         * Returns the total number of tuples generated thusfar
-         *
-         * @return
-         */
-        public synchronized long getCount() {
-            return this.count;
         }
 
         /**
@@ -580,10 +530,6 @@ public class AuctionMarkLoader extends Loader<AuctionMarkBenchmark> {
             for (SubTableGenerator<?> sub_generator : this.sub_generators) {
                 sub_generator.stopWhenEmpty();
             } // FOR
-        }
-
-        public boolean isFinish() {
-            return (this.latch.getCount() == 0);
         }
 
         public List<String> getDependencies() {
@@ -1248,7 +1194,6 @@ public class AuctionMarkLoader extends Loader<AuctionMarkBenchmark> {
         private LoaderItemInfo.Bid bid = null;
         private float currentBidPriceAdvanceStep;
         private long currentCreateDateAdvanceStep;
-        private float currentPrice;
         private boolean new_item;
 
         public ItemBidGenerator() throws SQLException {
@@ -1282,12 +1227,10 @@ public class AuctionMarkLoader extends Loader<AuctionMarkBenchmark> {
                 this.currentCreateDateAdvanceStep = (endDate.getTime() - itemInfo.startDate.getTime()) / (remaining + 1);
 //                this.currentBidPriceAdvanceStep = (itemInfo.currentPrice - itemInfo.initialPrice) * itemInfo.numBids;
                 this.currentBidPriceAdvanceStep = itemInfo.initialPrice * AuctionMarkConstants.ITEM_BID_PERCENT_STEP;
-                this.currentPrice = itemInfo.initialPrice;
             }
             // The last bid must always be the item's lastBidderId
             else if (remaining == 0) {
                 bidderId = itemInfo.lastBidderId;
-                this.currentPrice = itemInfo.currentPrice;
             }
             // The first bid for a two-bid item must always be different than the lastBidderId
             else if (itemInfo.numBids == 2) {
@@ -1301,7 +1244,6 @@ public class AuctionMarkLoader extends Loader<AuctionMarkBenchmark> {
 
                 Histogram<UserId> bidderHistogram = itemInfo.getBidderHistogram();
                 bidderId = profile.getRandomBuyerId(bidderHistogram, this.bid.bidderId, itemInfo.sellerId);
-                this.currentPrice += this.currentBidPriceAdvanceStep;
             }
 
 

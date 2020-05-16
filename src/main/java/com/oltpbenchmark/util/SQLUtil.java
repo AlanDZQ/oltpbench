@@ -40,31 +40,6 @@ public abstract class SQLUtil {
     };
 
     /**
-     * Return a Integer from the given object
-     * Handles the different cases from the various DBMSs
-     *
-     * @param obj
-     * @return
-     */
-    public static Integer getInteger(Object obj) {
-        if (obj == null) {
-            return (null);
-        }
-
-        if (obj instanceof Integer || obj.getClass().equals(int.class)) {
-            return (Integer) obj;
-        } else if (obj instanceof Long || obj.getClass().equals(long.class)) {
-            return ((Long) obj).intValue();
-        } else if (obj instanceof BigDecimal) {
-            return ((BigDecimal) obj).intValue();
-        }
-
-        LOG.warn("BAD BAD BAD: returning null because getInteger does not support {}", obj.getClass());
-
-        return (null);
-    }
-
-    /**
      * Return a long from the given object
      * Handles the different cases from the various DBMSs
      *
@@ -155,27 +130,6 @@ public abstract class SQLUtil {
                 LOG.warn("Unexpected request for sequence name on {} using {}", catalog_col, dbType);
         } // SWITCH
         return (null);
-    }
-
-    /**
-     * Returns true if the given exception is because of a duplicate key error
-     *
-     * @param ex
-     * @return
-     */
-    public static boolean isDuplicateKeyException(Exception ex) {
-        // MYSQL
-        if (ex instanceof SQLIntegrityConstraintViolationException) {
-            return (true);
-        } else if (ex instanceof SQLException) {
-            SQLException sqlEx = (SQLException) ex;
-
-            // POSTGRES
-            if (sqlEx.getSQLState().contains("23505")) {
-                return (true);
-            }
-        }
-        return (false);
     }
 
     /**
@@ -287,38 +241,6 @@ public abstract class SQLUtil {
     }
 
     /**
-     * Returns true if the given sqlType identifier is an Integer data type
-     *
-     * @param sqlType
-     * @return
-     * @see java.sql.Types
-     */
-    public static boolean isIntegerType(int sqlType) {
-        switch (sqlType) {
-            case Types.TINYINT:
-            case Types.SMALLINT:
-            case Types.INTEGER:
-            case Types.BIGINT: {
-                return (true);
-            }
-            default:
-                return (false);
-        }
-    }
-
-    /**
-     * Returns true if the given sqlType identifier should always
-     * be included in the DML with its corresponding column size
-     *
-     * @param sqlType
-     * @return
-     * @see java.sql.Types
-     */
-    public static boolean needsColumnSize(int sqlType) {
-        return isStringType(sqlType);
-    }
-
-    /**
      * Return the COUNT(*) SQL to calculate the number of records
      *
      * @param table
@@ -427,7 +349,7 @@ public abstract class SQLUtil {
         return String.format("SELECT MAX(%s) FROM %s", col, tableName);
     }
 
-    public static String selectColValues(DatabaseType dbType, Table catalog_tbl, String col) {
+    public static String selectColValues(Table catalog_tbl, String col) {
         return String.format("SELECT %s FROM %s",
                 col, catalog_tbl.getEscapedName());
     }

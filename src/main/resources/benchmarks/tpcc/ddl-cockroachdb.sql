@@ -8,8 +8,7 @@ DROP TABLE IF EXISTS district CASCADE;
 DROP TABLE IF EXISTS item CASCADE;
 DROP TABLE IF EXISTS warehouse CASCADE;
 
-CREATE TABLE order_line
-(
+CREATE TABLE order_line (
     ol_w_id        int       NOT NULL,
     ol_d_id        int       NOT NULL,
     ol_o_id        int       NOT NULL,
@@ -23,18 +22,14 @@ CREATE TABLE order_line
     PRIMARY KEY (ol_w_id, ol_d_id, ol_o_id DESC, ol_number)
 );
 
-
-CREATE TABLE new_order
-(
+CREATE TABLE new_order (
     no_w_id int NOT NULL,
     no_d_id int NOT NULL,
     no_o_id int NOT NULL,
     PRIMARY KEY (no_w_id, no_d_id, no_o_id)
 );
 
-
-CREATE TABLE stock
-(
+CREATE TABLE stock (
     s_w_id       int         NOT NULL,
     s_i_id       int         NOT NULL,
     s_quantity   int         NOT NULL,
@@ -55,9 +50,7 @@ CREATE TABLE stock
     PRIMARY KEY (s_w_id, s_i_id)
 );
 
-
-CREATE TABLE oorder
-(
+CREATE TABLE oorder (
     o_w_id       int       NOT NULL,
     o_d_id       int       NOT NULL,
     o_id         int       NOT NULL,
@@ -70,9 +63,7 @@ CREATE TABLE oorder
     UNIQUE INDEX order_idx (o_w_id, o_d_id, o_c_id, o_id DESC) STORING (o_entry_d, o_carrier_id)
 );
 
-
-CREATE TABLE history
-(
+CREATE TABLE history (
     h_c_id   int         NOT NULL,
     h_c_d_id int         NOT NULL,
     h_c_w_id int         NOT NULL,
@@ -83,9 +74,7 @@ CREATE TABLE history
     h_data   varchar(24) NOT NULL
 );
 
-
-CREATE TABLE customer
-(
+CREATE TABLE customer (
     c_w_id         int          NOT NULL,
     c_d_id         int          NOT NULL,
     c_id           int          NOT NULL,
@@ -110,9 +99,7 @@ CREATE TABLE customer
     PRIMARY KEY (c_w_id, c_d_id, c_id)
 );
 
-
-CREATE TABLE district
-(
+CREATE TABLE district (
     d_w_id      int         NOT NULL,
     d_id        int         NOT NULL,
     d_ytd       float       NOT NULL,
@@ -127,10 +114,7 @@ CREATE TABLE district
     PRIMARY KEY (d_w_id, d_id)
 );
 
-
-
-CREATE TABLE item
-(
+CREATE TABLE item (
     i_id    int         NOT NULL,
     i_name  varchar(24) NOT NULL,
     i_price float       NOT NULL,
@@ -139,9 +123,7 @@ CREATE TABLE item
     PRIMARY KEY (i_id)
 );
 
-
-CREATE TABLE warehouse
-(
+CREATE TABLE warehouse (
     w_id       int         NOT NULL,
     w_ytd      float       NOT NULL,
     w_tax      float       NOT NULL,
@@ -181,4 +163,3 @@ ALTER TABLE stock
     ADD CONSTRAINT fkey_stock_1 FOREIGN KEY (s_w_id) REFERENCES warehouse (w_id) ON DELETE CASCADE;
 ALTER TABLE stock
     ADD CONSTRAINT fkey_stock_2 FOREIGN KEY (s_i_id) REFERENCES item (i_id) ON DELETE CASCADE;
-
